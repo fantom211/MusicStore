@@ -101,7 +101,11 @@
         @foreach (var c in Model.Categories)
         {
             <a class="category-row" asp-controller="Catalog" asp-action="Index" asp-route-category="@c.Category">
-                <img class="icon" src="/images/products/@(c.Category.ToString().ToLower()).svg" alt="" aria-hidden="true" />
+                @{
+                    var categoryName = c.Category.ToString().ToLowerInvariant();
+                    var categoryExtension = c.Category == ProductCategory.Strings ? "svg" : "jpg";
+                }
+                <img class="icon" src="/images/products/@($"{categoryName}.{categoryExtension}")" alt="" aria-hidden="true" />
                 <span class="name">@c.Name</span>
                 <span class="count">@c.Count поз.</span>
                 <span class="arrow" aria-hidden="true">→</span>

@@ -5,6 +5,8 @@ using MusicStore.Web.Models;
 using MusicStore.Web.Models.Dtos;
 using MusicStore.Web.MVC;
 using MusicStore.Web.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace MusicStore.Web.Controllers;
 
@@ -13,10 +15,13 @@ namespace MusicStore.Web.Controllers;
 public class AdminController : Controller
 {
     private readonly CatalogService _catalogService;
-
-    public AdminController(CatalogService catalogService)
+    private readonly IWebHostEnvironment _environment;
+    public AdminController(
+    CatalogService catalogService,
+    IWebHostEnvironment environment)
     {
         _catalogService = catalogService;
+        _environment = environment;
     }
 
     public async Task<IActionResult> Index(string? search, ProductCategory? category, int page = 1)
@@ -51,7 +56,10 @@ public class AdminController : Controller
         {
             return View(request);
         }
-
+        if (request.ImageFile is { Length: > 0 })
+        {
+            request.ImageUrl = await SaveImageAsync(request.ImageFile);
+        }
         try
         {
             await _catalogService.CreateAsync(request);
@@ -98,9 +106,20 @@ public class AdminController : Controller
 
         try
         {
+            if (request.ImageFile is { Length: > 0 })
+            {
+                request.ImageUrl = await SaveImageAsync(request.ImageFile);
+            }
+
             await _catalogService.UpdateAsync(id, request);
+
             TempData["Success"] = "Изменения сохранены.";
             return RedirectToAction(nameof(Index));
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(nameof(request.ImageFile), ex.Message);
+            return View(request);
         }
         catch (ServiceException ex)
         {
@@ -124,5 +143,37 @@ public class AdminController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<string> SaveImageAsync(IFormFile file)
+    {
+        const long maxFileSize = 5 * 1024 * 1024;
+
+        if (file.Length == 0 || file.Length > maxFileSize)
+            throw new InvalidOperationException(
+                "Размер изображения должен быть от 1 байта до 5 МБ.");
+
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+        if (!allowedExtensions.Contains(extension))
+            throw new InvalidOperationException(
+                "Разрешены только JPG, JPEG, PNG и WEBP.");
+
+        var folder = Path.Combine(
+            _environment.WebRootPath, "images", "products");
+
+        Directory.CreateDirectory(folder);
+
+        var fileName = $"{Guid.NewGuid():N}{extension}";
+        var fullPath = Path.Combine(folder, fileName);
+
+        await using var stream = new FileStream(
+            fullPath, FileMode.CreateNew, FileAccess.Write);
+
+        await file.CopyToAsync(stream);
+
+        return $"/images/products/{fileName}";
     }
 }

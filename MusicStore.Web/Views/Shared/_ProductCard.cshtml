@@ -1,8 +1,10 @@
 ﻿@model ProductDto
 @{
-    var category = Enum.Parse<ProductCategory>(Model.Category);
-    var fallback = $"/images/products/{Model.Category.ToString().ToLower()}.svg";
-    var image = string.IsNullOrEmpty(Model.ImageUrl) ? fallback : Model.ImageUrl;
+    var category = Enum.Parse<ProductCategory>(Model.Category, true);
+
+    var extension = category == ProductCategory.Strings ? "svg" : "jpg";
+    var fallback = $"/images/products/{category.ToString().ToLowerInvariant()}.{extension}";
+    var image = string.IsNullOrWhiteSpace(Model.ImageUrl) ? fallback : Model.ImageUrl;
 }
 <article class="product-card">
     <a asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" class="card-main">

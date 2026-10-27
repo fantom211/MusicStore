@@ -113,5 +113,7 @@ public class ProductUpsertRequest
     [MaxLength(500)]
     public string ImageUrl { get; set; } = string.Empty;
 
+    public IFormFile? ImageFile { get; set; }
+
     public bool IsActive { get; set; } = true;
 }
