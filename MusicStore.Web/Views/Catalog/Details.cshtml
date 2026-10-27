@@ -43,6 +43,8 @@
                 {
                     <form asp-controller="Cart" asp-action="Add" method="post">
                         <div class="row">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
                             <input id="qty" type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" aria-label="Количество" />
                             <button type="submit" class="btn btn-primary">Добавить в корзину</button>
                         </div>

@@ -11,7 +11,7 @@
 
     <div class="topbar">
         <div class="container">
-            <span class="hide-sm">Независимый магазин музыкального оборудования</span>
+            <span class="hide-sm">Музыкальный магазин</span>
             <span>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -39,7 +39,8 @@
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a asp-controller="Orders" asp-action="Index">Заказы</a>
-                    <a asp-controller="Cart" asp-action="Index" class="cart-link">Корзина
+                    <a asp-controller="Cart" asp-action="Index" class="cart-link">
+                        Корзина
                         @await Component.InvokeAsync("CartBadge")
                     </a>
                     <span class="nav-username">

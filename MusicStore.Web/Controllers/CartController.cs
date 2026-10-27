@@ -24,7 +24,7 @@ public class CartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Add(int productId, int quantity = 1)
+    public async Task<IActionResult> Add(int productId, int quantity = 1, string? returnUrl = null)
     {
         try
         {
@@ -40,7 +40,12 @@ public class CartController : Controller
             TempData["Error"] = ex.Message;
         }
 
-        return RedirectToAction(nameof(Index));
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "Catalog");
     }
 
     [HttpPost]

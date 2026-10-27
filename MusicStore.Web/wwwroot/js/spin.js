@@ -29,82 +29,63 @@
         soundEnabled = localStorage.getItem('slots-sound') !== 'off';
     } catch (e) { /* приватный режим — просто оставляем вкл. */ }
 
-    var audioCtx = null;
-    var spinOscillators = [];
+    // ---------- Звуки игровых автоматов (оригинальные WAV-файлы) ----------
+    var soundBase = '/sounds/slots/';
+    var rumbleAudio = null;
+    var activeOneShots = [];
 
-    // ---------- Звук через Web Audio API (без аудиофайлов и библиотек) ----------
-
-    function ensureAudio() {
-        if (!audioCtx) {
-            var Ctx = window.AudioContext || window.webkitAudioContext;
-            if (!Ctx) { return null; }
-            audioCtx = new Ctx();
+    function playSound(file, volume, loop) {
+        if (!soundEnabled) { return null; }
+        var audio = new Audio(soundBase + file + '.wav');
+        audio.preload = 'auto';
+        audio.volume = volume == null ? 0.65 : volume;
+        audio.loop = loop === true;
+        activeOneShots.push(audio);
+        audio.addEventListener('ended', function () {
+            activeOneShots = activeOneShots.filter(function (item) { return item !== audio; });
+        }, { once: true });
+        var promise = audio.play();
+        if (promise && promise.catch) {
+            promise.catch(function () {
+                activeOneShots = activeOneShots.filter(function (item) { return item !== audio; });
+            });
         }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        return audioCtx;
+        return audio;
     }
 
-    function beep(freq, duration, type, volume, when) {
-        var ctx = ensureAudio();
-        if (!ctx || !soundEnabled) { return; }
-        var t = ctx.currentTime + (when || 0);
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = type || 'square';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(volume || 0.08, t);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + duration + 0.02);
-    }
-
-    // рокот вращения: короткие щелчки, как трещотка барабана
     function startRumble() {
-        var ctx = ensureAudio();
-        if (!ctx || !soundEnabled) { return; }
         stopRumble();
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        var lfo = ctx.createOscillator();
-        var lfoGain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.value = 55;
-        lfo.type = 'square';
-        lfo.frequency.value = 14;
-        lfoGain.gain.value = 0.05;
-        gain.gain.value = 0.05;
-        lfo.connect(lfoGain).connect(gain.gain);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start();
-        lfo.start();
-        spinOscillators = [osc, lfo];
+        rumbleAudio = playSound('slot-spin-loop', 0.34, true);
     }
 
     function stopRumble() {
-        spinOscillators.forEach(function (o) {
-            try { o.stop(); } catch (e) { /* уже остановлен */ }
-        });
-        spinOscillators = [];
+        if (rumbleAudio) {
+            rumbleAudio.pause();
+            rumbleAudio.currentTime = 0;
+            activeOneShots = activeOneShots.filter(function (item) { return item !== rumbleAudio; });
+            rumbleAudio = null;
+        }
     }
 
-    // «дзынь» остановки барабана — нота пентатоники, каждый следующий выше
     function stopChime(index) {
-        beep([520, 660, 880][index] || 660, 0.18, 'triangle', 0.12);
-        beep([524, 662, 884][index] || 664, 0.1, 'sine', 0.06, 0.02);
+        playSound('slot-reel-stop-' + (index + 1), 0.62, false);
     }
 
     function winFanfare() {
-        [523, 659, 784, 1046].forEach(function (freq, i) {
-            beep(freq, 0.22, 'triangle', 0.11, i * 0.13);
-        });
+        playSound('slot-win', 0.72, false);
     }
 
     function loseNote() {
-        beep(330, 0.25, 'sine', 0.09);
-        beep(262, 0.3, 'sine', 0.09, 0.18);
+        playSound('slot-no-win', 0.52, false);
+    }
+
+    function stopAllSounds() {
+        stopRumble();
+        activeOneShots.forEach(function (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        activeOneShots = [];
     }
 
     // ---------- Управление звуком ----------
@@ -120,9 +101,11 @@
         soundToggle.addEventListener('click', function () {
             soundEnabled = !soundEnabled;
             try { localStorage.setItem('slots-sound', soundEnabled ? 'on' : 'off'); } catch (e) { /* ignore */ }
-            if (!soundEnabled) { stopRumble(); }
+            if (!soundEnabled) {
+                stopAllSounds();
+            }
             renderSoundToggle();
-            if (soundEnabled) { beep(660, 0.08, 'sine', 0.08); }
+            if (soundEnabled) { playSound('slot-click', 0.55, false); }
         });
     }
 
@@ -165,6 +148,7 @@
             // фан-режим администратора: результат не сохраняется
             title.textContent = data.symbols.join(' ') + ' — ' + (data.discountPercent > 0 ? 'выпало ' + data.discountPercent + '%' : 'без скидки');
             text.textContent = 'Фан-режим: прокрутка не сохранена, бонус не начисляется. Крутите ещё!';
+            if (data.discountPercent > 0) { winFanfare(); } else { loseNote(); }
         } else if (data.discountPercent > 0) {
             title.classList.add('win');
             title.textContent = '🎉 ' + data.symbols.join(' ') + ' — скидка ' + data.discountPercent + '%!';
