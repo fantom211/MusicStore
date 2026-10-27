@@ -1,0 +1,39 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<section class="auth-page">
+    <p class="kicker">Музыкальная Планета</p>
+    <h1>Стать своим</h1>
+    <p class="lead" style="font-size: 16px;">Аккаунт нужен для корзины, заказов и слотов.</p>
+
+    <form asp-action="Register" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 12px;"></div>
+
+        <div class="field">
+            <label asp-for="UserName">Имя пользователя</label>
+            <input asp-for="UserName" autocomplete="username" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" autocomplete="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Password">Пароль (от 6 символов)</label>
+            <input asp-for="Password" type="password" autocomplete="new-password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <label asp-for="ConfirmPassword">Повторите пароль</label>
+            <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Зарегистрироваться</button>
+    </form>
+
+    <p class="switch">Уже есть аккаунт? <a asp-action="Login">Войти</a>.</p>
+</section>

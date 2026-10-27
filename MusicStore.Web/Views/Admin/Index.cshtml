@@ -1,0 +1,120 @@
+﻿@model AdminIndexViewModel
+@{
+    ViewData["Title"] = "Админ-панель";
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Администрирование</p>
+            <h2>Товары магазина</h2>
+        </div>
+        <a class="btn btn-primary" asp-action="Create">+ Новый товар</a>
+    </div>
+
+    <div class="catalog-toolbar">
+        <form method="get" asp-action="Index" style="display: grid; grid-template-columns: 2fr 1.2fr auto auto; gap: 12px; align-items: end;">
+            <div class="field">
+                <label for="a-search">Поиск</label>
+                <input id="a-search" type="text" name="search" value="@Model.Search" placeholder="Название" />
+            </div>
+            <div class="field">
+                <label for="a-category">Категория</label>
+                <select id="a-category" name="category">
+                    <option value="">Все</option>
+                    @foreach (var category in Enum.GetValues<ProductCategory>())
+                    {
+                        <option value="@category" selected="@(Model.Category == category)">@category.GetDisplayName()</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-dark">Найти</button>
+            <a class="btn btn-quiet" asp-action="Index">Сбросить</a>
+        </form>
+    </div>
+
+    <p class="found" style="font-family: var(--mono); font-size: 13px; color: var(--muted); margin: -8px 0 16px;">
+        Всего: @Model.Products.TotalCount
+    </p>
+
+    @if (Model.Products.Items.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="title">Товаров не найдено</p>
+            <p>Измените фильтр или создайте первый товар.</p>
+        </div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Товар</th>
+                    <th scope="col">Категория</th>
+                    <th scope="col">Цена</th>
+                    <th scope="col">Скидка</th>
+                    <th scope="col">Склад</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products.Items)
+                {
+                    var fallback = $"/images/products/{product.Category.ToLower()}.svg";
+                    var image = string.IsNullOrEmpty(product.ImageUrl) ? fallback : product.ImageUrl;
+                    <tr>
+                        <td><img class="thumb" src="@image" alt="" onerror="this.onerror=null;this.src='@fallback'" /></td>
+                        <td>
+                            <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id">@product.Name</a><br />
+                            <span class="num" style="color: var(--muted); font-size: 12px;">#@product.Id</span>
+                        </td>
+                        <td>@(Enum.Parse<ProductCategory>(product.Category).GetDisplayName())</td>
+                        <td class="num">@product.Price.ToString("N2") ₽</td>
+                        <td class="num">@(product.DiscountPercent > 0 ? $"{product.DiscountPercent}%" : "—")</td>
+                        <td class="num">@product.StockQuantity</td>
+                        <td>
+                            @if (product.IsActive)
+                            {
+                                <span class="status-badge Paid">активен</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge Cancelled">скрыт</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="admin-actions">
+                                <a class="btn btn-quiet btn-sm" asp-action="Edit" asp-route-id="@product.Id">Изменить</a>
+                                <form asp-action="Delete" method="post">
+                                    <input type="hidden" name="id" value="@product.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            title="@(product.InStock ? "Удалить" : "Товар из заказов — только скрыть через редактирование")"
+                                            onclick="return confirm('Удалить товар «@product.Name»?');">Удалить</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (Model.Products.TotalPages > 1)
+        {
+            <nav class="pagination" aria-label="Страницы">
+                @for (var p = 1; p <= Model.Products.TotalPages; p++)
+                {
+                    if (p == Model.Products.Page)
+                    {
+                        <span class="current" aria-current="page">@p</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-category="@Model.Category" asp-route-page="@p">@p</a>
+                    }
+                }
+            </nav>
+        }
+    }
+</section>

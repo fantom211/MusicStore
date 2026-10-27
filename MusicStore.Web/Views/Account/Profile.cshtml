@@ -1,0 +1,115 @@
+﻿@model ProfileViewModel
+@{
+    ViewData["Title"] = "Личный кабинет";
+    var statusNames = new Dictionary<string, string>
+    {
+        ["New"] = "новый",
+        ["Paid"] = "оплачен",
+        ["Shipped"] = "отправлен",
+        ["Delivered"] = "доставлен",
+        ["Cancelled"] = "отменён",
+    };
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Кабинет</p>
+            <h2>Здравствуйте, @Model.UserName</h2>
+        </div>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="btn btn-quiet btn-sm">Выйти</button>
+        </form>
+    </div>
+
+    <div class="profile-grid">
+        <div>
+            <div class="info-box">
+                <p class="kicker">Профиль</p>
+                @if (Model.Profile != null)
+                {
+                    <ul class="spec-list" style="margin-top: 6px; border-top: none;">
+                        <li><span class="k">Имя</span><span>@Model.Profile.UserName</span></li>
+                        <li><span class="k">Email</span><span>@Model.Profile.Email</span></li>
+                        <li>
+                            <span class="k">Роли</span>
+                            <span>@string.Join(", ", Model.Profile.Roles)</span>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <p style="color: var(--accent-dark);">
+                        Не удалось получить профиль из IdentityService — он может быть не запущен.
+                    </p>
+                }
+            </div>
+
+            <div class="info-box">
+                <p class="kicker">Бонусы</p>
+                @if (Model.ActiveBonus != null && Model.ActiveBonus.ExpiresAt > DateTime.UtcNow)
+                {
+                    <div class="bonus-card">
+                        <div class="percent">−@Model.ActiveBonus.DiscountPercent%</div>
+                        <p style="margin: 8px 0 0;">
+                            Скидка от «Слотов удачи». Действует до
+                            @(Model.ActiveBonus.ExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "—")
+                            и применяется к одному заказу.
+                        </p>
+                        <a class="btn btn-dark btn-sm" style="margin-top: 12px;"
+                           asp-controller="Cart" asp-action="Index">Перейти в корзину</a>
+                    </div>
+                }
+                else
+                {
+                    <p style="margin: 0; color: var(--ink-soft);">
+                        Активных бонусов нет. Крутите «Слоты удачи» — одна бесплатная попытка в сутки.
+                    </p>
+                    <a class="btn btn-sm" style="margin-top: 10px;" asp-controller="Spins" asp-action="Index">К слотам</a>
+                }
+            </div>
+        </div>
+
+        <div>
+            <div class="section-head" style="margin-bottom: 14px;">
+                <h3 style="margin: 0;">Последние заказы</h3>
+                <a class="more" asp-controller="Orders" asp-action="Index">Все заказы →</a>
+            </div>
+            @if (Model.RecentOrders.Count == 0)
+            {
+                <div class="empty-state">
+                    <p class="title">Заказов пока нет</p>
+                    <p><a asp-controller="Catalog" asp-action="Index">Выберите первый инструмент</a>.</p>
+                </div>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">№</th>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Позиций</th>
+                            <th scope="col">Сумма</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td class="num">#@order.Id</td>
+                                <td class="num">@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                                <td class="num">@order.Items.Count</td>
+                                <td class="num">@order.TotalAmount.ToString("N2") ₽</td>
+                                <td><span class="status-badge @order.Status">@(statusNames.GetValueOrDefault(order.Status, order.Status))</span></td>
+                                <td><a class="btn btn-quiet btn-sm" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id">Открыть</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</section>

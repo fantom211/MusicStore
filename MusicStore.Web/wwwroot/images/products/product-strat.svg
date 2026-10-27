@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="330" cy="60" r="90" fill="#e6dcc4"/>
+  <!-- гриф -->
+  <rect x="196" y="18" width="18" height="150" fill="#5b4232" transform="rotate(28 205 93)"/>
+  <!-- голова грифа -->
+  <path d="M 112 22 L 146 8 L 152 34 L 118 48 Z" fill="#3d2c20"/>
+  <circle cx="126" cy="30" r="3" fill="#d9c9a8"/>
+  <circle cx="134" cy="26" r="3" fill="#d9c9a8"/>
+  <circle cx="142" cy="22" r="3" fill="#d9c9a8"/>
+  <!-- корпус -->
+  <path d="M 205 170 C 175 165 150 180 145 210 C 140 242 160 268 195 272 C 235 276 268 258 272 228 C 276 200 260 182 236 176 C 226 173 214 172 205 170 Z"
+        fill="#a33b1e"/>
+  <path d="M 205 170 C 175 165 150 180 145 210 C 140 242 160 268 195 272 C 235 276 268 258 272 228 C 276 200 260 182 236 176 C 226 173 214 172 205 170 Z"
+        fill="none" stroke="#6e2510" stroke-width="10"/>
+  <!-- пикгард -->
+  <path d="M 200 185 C 180 183 162 196 160 214 C 158 236 174 252 200 254 C 228 256 250 244 252 224 C 254 206 240 194 222 190 Z"
+        fill="#efe6d3" opacity="0.92"/>
+  <!-- звукосниматели, ручки, бридж -->
+  <rect x="188" y="192" width="26" height="10" rx="3" fill="#26221c"/>
+  <rect x="186" y="208" width="30" height="10" rx="3" fill="#26221c"/>
+  <rect x="184" y="224" width="34" height="10" rx="3" fill="#26221c"/>
+  <circle cx="226" cy="248" r="5" fill="#26221c"/>
+  <circle cx="240" cy="242" r="5" fill="#26221c"/>
+  <!-- струны -->
+  <line x1="124" y1="32" x2="206" y2="216" stroke="#e8ddc0" stroke-width="1.4"/>
+  <line x1="130" y1="28" x2="212" y2="212" stroke="#e8ddc0" stroke-width="1.1"/>
+</svg>

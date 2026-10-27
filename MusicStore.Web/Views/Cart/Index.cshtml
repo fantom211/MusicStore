@@ -1,0 +1,95 @@
+﻿@model CartDto
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Покупка</p>
+            <h2>Корзина</h2>
+        </div>
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="title">Корзина пуста</p>
+            <p>Выберите инструмент в каталоге — он появится здесь.</p>
+            <a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">В каталог</a>
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 32px; align-items: start;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">Товар</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Кол-во</th>
+                        <th scope="col">Сумма</th>
+                        <th scope="col"><span class="visually-hidden">Действия</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        var fallback = $"/images/products/{item.Category.ToLower()}.svg";
+                        var image = string.IsNullOrEmpty(item.ImageUrl) ? fallback : item.ImageUrl;
+                        <tr>
+                            <td>
+                                <img class="thumb" src="@image" alt="" onerror="this.onerror=null;this.src='@fallback'" />
+                            </td>
+                            <td>
+                                <a asp-controller="Catalog" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                @if (item.DiscountPercent > 0)
+                                {
+                                    <span class="discount-badge" style="margin-left: 6px;">−@item.DiscountPercent%</span>
+                                }
+                            </td>
+                            <td class="num">
+                                @item.FinalPrice.ToString("N2") ₽
+                                @if (item.DiscountPercent > 0)
+                                {
+                                    <span class="price-old" style="display:block;">@item.Price.ToString("N0") ₽</span>
+                                }
+                            </td>
+                            <td>
+                                <form asp-action="Update" method="post" class="qty-form">
+                                    <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.StockQuantity"
+                                           aria-label="Количество @item.ProductName" />
+                                    <button type="submit" class="icon-btn" title="Обновить количество" aria-label="Обновить количество">✓</button>
+                                </form>
+                            </td>
+                            <td class="num"><strong>@item.Subtotal.ToString("N2") ₽</strong></td>
+                            <td>
+                                <form asp-action="Remove" method="post">
+                                    <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                    <button type="submit" class="icon-btn" title="Убрать из корзины" aria-label="Убрать @item.ProductName из корзины">✕</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <aside class="summary-box" aria-label="Итог заказа">
+                <p class="kicker" style="margin-bottom: 14px;">Итого</p>
+                <div class="line"><span>Позиций</span><span class="num">@Model.TotalCount</span></div>
+                <div class="line"><span>Товары</span><span class="num">@Model.Total.ToString("N2") ₽</span></div>
+                <div class="total">
+                    <span>К оплате</span>
+                    <span class="value">@Model.Total.ToString("N2") ₽</span>
+                </div>
+                <a class="btn btn-primary btn-block btn-lg" style="margin-top: 16px;" asp-controller="Orders" asp-action="Checkout">
+                    Оформить заказ
+                </a>
+                <p style="font-size: 13px; color: var(--muted); margin: 10px 0 0;">
+                    Бонус от «Слотов удачи» можно применить на следующем шаге.
+                </p>
+            </aside>
+        </div>
+    }
+</section>

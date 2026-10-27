@@ -1,0 +1,17 @@
+## .NET
+bin/
+obj/
+*.user
+appsettings.*.local.json
+
+## User Secrets не хранятся в репозитории (%APPDATA%\Microsoft\UserSecrets)
+secrets.json
+
+## Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+
+## Логи и временные файлы
+*.log
+*.tmp

@@ -1,0 +1,104 @@
+﻿@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Оформление заказа";
+    var bonusTotal = Model.HasActiveBonus
+        ? Math.Round(Model.Cart.Total * (1 - Model.ActiveBonusPercent / 100m), 2, MidpointRounding.AwayFromZero)
+        : Model.Cart.Total;
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Покупка</p>
+            <h2>Оформление заказа</h2>
+        </div>
+        <a class="more" asp-controller="Cart" asp-action="Index">← Корзина</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 36px; align-items: start;">
+        <form asp-action="Checkout" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 14px;"></div>
+
+            <h3 style="margin-bottom: 14px;">Адрес доставки</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="field">
+                    <label asp-for="Address.City">Город *</label>
+                    <input asp-for="Address.City" autocomplete="address-level2" />
+                    <span asp-validation-for="Address.City" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Address.Street">Улица *</label>
+                    <input asp-for="Address.Street" autocomplete="address-line1" />
+                    <span asp-validation-for="Address.Street" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Address.House">Дом *</label>
+                    <input asp-for="Address.House" autocomplete="address-line2" />
+                    <span asp-validation-for="Address.House" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Address.Apartment">Квартира</label>
+                    <input asp-for="Address.Apartment" />
+                </div>
+                <div class="field">
+                    <label asp-for="Address.PostalCode">Индекс *</label>
+                    <input asp-for="Address.PostalCode" autocomplete="postal-code" inputmode="numeric" />
+                    <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Address.Phone">Телефон</label>
+                    <input asp-for="Address.Phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00" />
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label asp-for="Address.RecipientName">Получатель</label>
+                    <input asp-for="Address.RecipientName" autocomplete="name" />
+                </div>
+            </div>
+
+            @if (Model.HasActiveBonus)
+            {
+                <div class="bonus-card" style="margin: 22px 0;">
+                    <label class="check">
+                        <input asp-for="UseSpinBonus" type="checkbox" />
+                        <span>
+                            <strong style="font-size: 17px;">Казино-бонус: −@Model.ActiveBonusPercent%</strong><br />
+                            <span style="font-size: 14px; color: var(--ink-soft);">
+                                Скидка от «Слотов удачи», действует до
+                                @(Model.ActiveBonusExpiresAt?.ToLocalTime().ToString("dd.MM HH:mm") ?? "—").
+                                Применится к этому заказу и сгорит.
+                            </span>
+                        </span>
+                    </label>
+                </div>
+            }
+
+            <button type="submit" class="btn btn-primary btn-lg">Подтвердить заказ</button>
+        </form>
+
+        <aside class="summary-box" aria-label="Состав заказа">
+            <p class="kicker" style="margin-bottom: 14px;">Ваш заказ</p>
+            @foreach (var item in Model.Cart.Items)
+            {
+                <div class="line">
+                    <span>@item.ProductName × @item.Quantity</span>
+                    <span class="num">@item.Subtotal.ToString("N2") ₽</span>
+                </div>
+            }
+            <div class="line"><span>Товары</span><span class="num">@Model.Cart.Total.ToString("N2") ₽</span></div>
+            @if (Model.HasActiveBonus)
+            {
+                <div class="line bonus-line">
+                    <span>Бонус слотов (если применён)</span>
+                    <span class="num">−@Model.ActiveBonusPercent%</span>
+                </div>
+            }
+            <div class="total">
+                <span>Итого@(Model.HasActiveBonus ? " с бонусом" : "")</span>
+                <span class="value">@bonusTotal.ToString("N2") ₽</span>
+            </div>
+            <p style="font-size: 13px; color: var(--muted); margin: 12px 0 0;">
+                Итоговую сумму рассчитывает сервер при подтверждении.
+            </p>
+        </aside>
+    </div>
+</section>

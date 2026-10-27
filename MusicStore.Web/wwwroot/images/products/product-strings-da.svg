@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="80" cy="70" r="85" fill="#e6dcc4"/>
+  <rect x="98" y="66" width="204" height="170" rx="10" fill="#26221c" stroke="#26221c" stroke-width="4"/>
+  <rect x="98" y="66" width="204" height="56" rx="10" fill="#7c1f3f"/>
+  <text x="200" y="102" font-family="Georgia, serif" font-size="26" font-weight="bold" fill="#fdfaf3" text-anchor="middle">D'ADDARIO</text>
+  <text x="200" y="158" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="#f6f1e7" text-anchor="middle">EJ16 PHOSPHOR</text>
+  <text x="200" y="190" font-family="Consolas, monospace" font-size="22" fill="#f6f1e7" text-anchor="middle">12 — 53</text>
+  <path d="M 140 208 q 15 -18 30 0 q 15 18 30 0 q 15 -18 30 0 q 15 18 30 0" stroke="#b9ad97" stroke-width="2.5" fill="none"/>
+</svg>

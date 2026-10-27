@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="318" cy="72" r="88" fill="#e6dcc4"/>
+  <rect x="86" y="66" width="228" height="188" rx="4" fill="#b98a4e" stroke="#26221c" stroke-width="3"/>
+  <rect x="100" y="80" width="200" height="34" rx="3" fill="#26221c"/>
+  <g fill="#d9a441">
+    <circle cx="124" cy="97" r="6"/>
+    <circle cx="150" cy="97" r="6"/>
+    <circle cx="176" cy="97" r="6"/>
+    <circle cx="202" cy="97" r="6"/>
+    <circle cx="228" cy="97" r="6"/>
+    <circle cx="254" cy="97" r="6"/>
+  </g>
+  <circle cx="284" cy="97" r="8" fill="#8f2d1c"/>
+  <rect x="100" y="126" width="200" height="112" rx="3" fill="#d8cbb0"/>
+  <g stroke="#b9ad97" stroke-width="2.5">
+    <line x1="100" y1="146" x2="300" y2="146"/>
+    <line x1="100" y1="166" x2="300" y2="166"/>
+    <line x1="100" y1="186" x2="300" y2="186"/>
+    <line x1="100" y1="206" x2="300" y2="206"/>
+    <line x1="100" y1="226" x2="300" y2="226"/>
+  </g>
+  <text x="200" y="120" font-family="Georgia, serif" font-size="15" font-style="italic" fill="#f6f1e7" text-anchor="middle">Fender</text>
+</svg>

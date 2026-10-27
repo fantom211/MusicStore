@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="340" cy="46" r="70" fill="#e6dcc4"/>
+  
+  <rect x="188" y="26" width="16" height="130" fill="#5b4232" transform="rotate(26 196 91)"/>
+  <path d="M 205 168 C 176 162 152 178 148 206 C 144 236 162 258 194 262 C 228 266 256 250 260 222 C 264 196 248 180 226 174 Z" fill="#a33b1e" stroke="#6e2510" stroke-width="8"/>
+  <rect x="186" y="192" width="28" height="9" rx="3" fill="#26221c"/>
+  <circle cx="224" cy="240" r="5" fill="#26221c"/>
+  <rect x="26" y="238" width="150" height="3" fill="#bf4a26"/>
+  <text x="26" y="266" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#26221c">Гитары</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="320" cy="80" r="95" fill="#e6dcc4"/>
+  <!-- корпус -->
+  <rect x="60" y="120" width="280" height="70" rx="8" fill="#1c1a16"/>
+  <rect x="60" y="120" width="280" height="22" rx="8" fill="#33302a"/>
+  <!-- клавиши -->
+  <g fill="#f6f1e7">
+    <rect x="76" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="106" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="136" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="166" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="196" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="226" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="256" y="150" width="30" height="34" stroke="#26221c"/>
+    <rect x="286" y="150" width="38" height="34" stroke="#26221c"/>
+  </g>
+  <g fill="#26221c">
+    <rect x="100" y="150" width="16" height="20"/>
+    <rect x="130" y="150" width="16" height="20"/>
+    <rect x="190" y="150" width="16" height="20"/>
+    <rect x="220" y="150" width="16" height="20"/>
+    <rect x="250" y="150" width="16" height="20"/>
+  </g>
+  <!-- ножки -->
+  <rect x="84" y="190" width="12" height="80" fill="#1c1a16"/>
+  <rect x="304" y="190" width="12" height="80" fill="#1c1a16"/>
+  <rect x="84" y="262" width="44" height="8" rx="3" fill="#1c1a16"/>
+  <rect x="272" y="262" width="44" height="8" rx="3" fill="#1c1a16"/>
+  <text x="200" y="137" font-family="Georgia, serif" font-size="14" fill="#b9ad97" text-anchor="middle">YAMAHA</text>
+</svg>

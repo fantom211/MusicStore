@@ -1,0 +1,112 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = null;
+    var hero = Model.Popular.FirstOrDefault();
+}
+
+<section class="hero">
+    <div>
+        <p class="kicker">Выпуск №12 · осень 2026</p>
+        <h1>Инструменты, <em>которые звучат</em> правильно</h1>
+        <p class="lead">
+            «Музыкальная Планета» — магазин для тех, кто выбирает инструмент руками и ушами, а не по картинке.
+            Гитары, пианино, барабаны, усилители и пластинки — всё проверено в нашей мастерской.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" asp-controller="Catalog" asp-action="Index">Открыть каталог</a>
+            <a class="btn btn-lg" asp-controller="Spins" asp-action="Index">🎰 Слоты удачи</a>
+        </div>
+        <div class="hero-meta">
+            <div class="stat"><div class="num">6</div><div class="cap">категорий</div></div>
+            <div class="stat"><div class="num">12+</div><div class="cap">инструментов в наличии</div></div>
+            <div class="stat"><div class="num">24 ч</div><div class="cap">держим скидку из слотов</div></div>
+        </div>
+    </div>
+    @if (hero != null)
+    {
+        <a asp-controller="Catalog" asp-action="Details" asp-route-id="@hero.Id" class="hero-image" aria-label="@hero.Name">
+            <img src="@(string.IsNullOrEmpty(hero.ImageUrl) ? "/images/products/guitars.svg" : hero.ImageUrl)" alt="@hero.Name" />
+        </a>
+    }
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Витрина</p>
+            <h2>Только что на полке</h2>
+        </div>
+        <a class="more" asp-controller="Catalog" asp-action="Index">Весь каталог →</a>
+    </div>
+    @if (Model.Popular.Count == 0)
+    {
+        <div class="empty-state"><p class="title">Каталог заполняется</p><p>Загляните позже.</p></div>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model.Popular)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+    }
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Со скидкой</p>
+            <h2>Цены вниз, звук прежний</h2>
+        </div>
+        <a class="more" asp-controller="Catalog" asp-action="Index" asp-route-onlyDiscounted="true">Все скидки →</a>
+    </div>
+    @if (Model.Discounted.Count == 0)
+    {
+        <div class="empty-state"><p class="title">Скидок сейчас нет</p><p>Зато можно выиграть скидку в «Слотах удачи».</p></div>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model.Discounted)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+    }
+</section>
+
+<section class="section">
+    <div class="slots-teaser">
+        <div>
+            <p class="kicker">Ежедневно и бесплатно</p>
+            <h2>Слоты удачи</h2>
+            <p>
+                Одна прокрутка в сутки — шанс получить скидку до 20% на следующий заказ.
+                Это не игра на деньги: вы ничего не платите и ничего не теряете.
+            </p>
+            <a class="btn btn-primary" asp-controller="Spins" asp-action="Index">Испытать удачу</a>
+        </div>
+        <div class="symbols" aria-hidden="true">💎🍒🔔</div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Разделы</p>
+            <h2>Шесть полок мастерской</h2>
+        </div>
+    </div>
+    <div class="category-rows">
+        @foreach (var c in Model.Categories)
+        {
+            <a class="category-row" asp-controller="Catalog" asp-action="Index" asp-route-category="@c.Category">
+                <img class="icon" src="/images/products/@(c.Category.ToString().ToLower()).svg" alt="" aria-hidden="true" />
+                <span class="name">@c.Name</span>
+                <span class="count">@c.Count поз.</span>
+                <span class="arrow" aria-hidden="true">→</span>
+            </a>
+        }
+    </div>
+</section>

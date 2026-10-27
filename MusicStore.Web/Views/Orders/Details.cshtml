@@ -1,0 +1,81 @@
+﻿@model OrderDto
+@{
+    ViewData["Title"] = $"Заказ #@Model.Id";
+    var statusNames = new Dictionary<string, string>
+    {
+        ["New"] = "новый",
+        ["Paid"] = "оплачен",
+        ["Shipped"] = "отправлен",
+        ["Delivered"] = "доставлен",
+        ["Cancelled"] = "отменён",
+    };
+}
+
+<nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <a asp-controller="Orders" asp-action="Index">Заказы</a><span>/</span><span>Заказ #@Model.Id</span>
+</nav>
+
+@{
+    var apartment = string.IsNullOrEmpty(Model.Address.Apartment) ? "" : $", кв. {Model.Address.Apartment}";
+}
+
+<section class="section" style="border-top: none; padding-top: 0;">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Заказ #@Model.Id</p>
+            <h2>@Model.CreatedAt.ToLocalTime().ToString("d MMMM yyyy, HH:mm")</h2>
+        </div>
+        <span class="status-badge @Model.Status" style="font-size: 14px;">@(statusNames.GetValueOrDefault(Model.Status, Model.Status))</span>
+    </div>
+
+    <table class="data-table" style="margin-bottom: 28px;">
+        <thead>
+            <tr>
+                <th scope="col">Товар</th>
+                <th scope="col">Цена на момент заказа</th>
+                <th scope="col">Кол-во</th>
+                <th scope="col">Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><a asp-controller="Catalog" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a></td>
+                    <td class="num">@item.UnitPrice.ToString("N2") ₽</td>
+                    <td class="num">@item.Quantity</td>
+                    <td class="num">@item.Subtotal.ToString("N2") ₽</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start;">
+        <div class="info-box">
+            <p class="kicker">Доставка</p>
+            <p style="margin: 0;">
+                @Model.Address.PostalCode, г. @Model.Address.City, ул. @Model.Address.Street, д. @Model.Address.House@apartment
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Address.RecipientName))
+            {
+                <p style="margin: 8px 0 0; color: var(--ink-soft);">Получатель: @Model.Address.RecipientName</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Address.Phone))
+            {
+                <p style="margin: 4px 0 0; color: var(--ink-soft);">Телефон: @Model.Address.Phone</p>
+            }
+        </div>
+
+        <div class="summary-box" style="position: static;">
+            <div class="line"><span>Товары</span><span class="num">@Model.ItemsTotal.ToString("N2") ₽</span></div>
+            @if (Model.SpinDiscountPercent > 0)
+            {
+                <div class="line bonus-line"><span>Бонус «Слотов удачи»</span><span class="num">−@Model.SpinDiscountPercent%</span></div>
+            }
+            <div class="total">
+                <span>Итого</span>
+                <span class="value">@Model.TotalAmount.ToString("N2") ₽</span>
+            </div>
+        </div>
+    </div>
+</section>

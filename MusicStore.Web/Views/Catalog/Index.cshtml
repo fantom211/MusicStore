@@ -1,0 +1,116 @@
+﻿@model CatalogIndexViewModel
+@{
+    ViewData["Title"] = "Каталог";
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Каталог</p>
+            <h2>Все инструменты</h2>
+        </div>
+        <span class="found">Найдено: @Model.Products.TotalCount</span>
+    </div>
+
+    <div class="catalog-toolbar">
+        <form method="get" asp-action="Index">
+            <div class="field">
+                <label for="f-search">Поиск</label>
+                <input id="f-search" type="text" name="search" value="@Model.Search" placeholder="Название или описание" />
+            </div>
+            <div class="field">
+                <label for="f-category">Категория</label>
+                <select id="f-category" name="category">
+                    <option value="">Все категории</option>
+                    @foreach (var category in Enum.GetValues<ProductCategory>())
+                    {
+                        <option value="@category" selected="@(Model.Category == category.ToString())">@category.GetDisplayName()</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="f-min">Цена от</label>
+                <input id="f-min" type="number" name="minPrice" min="0" step="100" value="@Model.MinPrice" placeholder="0" />
+            </div>
+            <div class="field">
+                <label for="f-max">Цена до</label>
+                <input id="f-max" type="number" name="maxPrice" min="0" step="100" value="@Model.MaxPrice" placeholder="∞" />
+            </div>
+            <div class="field">
+                <label for="f-sort">Сортировка</label>
+                <select id="f-sort" name="sort">
+                    @foreach (var (value, label) in new (string, string)[]
+                    {
+                        ("newest", "Сначала новые"),
+                        ("name", "По названию"),
+                        ("price_asc", "Дешевле"),
+                        ("price_desc", "Дороже"),
+                        ("discount", "Со скидкой"),
+                    })
+                    {
+                        <option value="@value" selected="@(Model.Sort == value)">@label</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <span class="label">Скидки</span>
+                <label class="check">
+                    <input type="checkbox" name="onlyDiscounted" value="true" checked="@Model.OnlyDiscounted" />
+                    только со скидкой
+                </label>
+            </div>
+            <button type="submit" class="btn btn-dark">Применить</button>
+            <a class="btn btn-quiet" asp-action="Index">Сбросить</a>
+        </form>
+    </div>
+
+    <p class="found" style="margin: -10px 0 18px; font-family: var(--mono); font-size: 13px; color: var(--muted);">
+        Показано @Model.Products.Items.Count из @Model.Products.TotalCount
+        @if (Model.Products.TotalPages > 1)
+        {
+            <text>· страница @Model.Products.Page из @Model.Products.TotalPages</text>
+        }
+    </p>
+
+    @if (Model.Products.Items.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="title">Ничего не нашлось</p>
+            <p>Попробуйте ослабить фильтры или сбросить их.</p>
+            <a class="btn" asp-action="Index">Сбросить фильтры</a>
+        </div>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model.Products.Items)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+
+        @if (Model.Products.TotalPages > 1)
+        {
+            <nav class="pagination" aria-label="Страницы каталога">
+                @for (var p = 1; p <= Model.Products.TotalPages; p++)
+                {
+                    if (p == Model.Products.Page)
+                    {
+                        <span class="current" aria-current="page">@p</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-category="@Model.Category"
+                           asp-route-minPrice="@Model.MinPrice"
+                           asp-route-maxPrice="@Model.MaxPrice"
+                           asp-route-onlyDiscounted="@(Model.OnlyDiscounted ? "true" : null)"
+                           asp-route-sort="@Model.Sort"
+                           asp-route-page="@p">@p</a>
+                    }
+                }
+            </nav>
+        }
+    }
+</section>

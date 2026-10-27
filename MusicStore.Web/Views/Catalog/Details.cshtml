@@ -1,0 +1,70 @@
+﻿@model ProductDto
+@{
+    ViewData["Title"] = Model.Name;
+    var category = Enum.Parse<ProductCategory>(Model.Category);
+    var fallback = $"/images/products/{Model.Category.ToString().ToLower()}.svg";
+    var image = string.IsNullOrEmpty(Model.ImageUrl) ? fallback : Model.ImageUrl;
+}
+
+<nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <a asp-controller="Catalog" asp-action="Index">Каталог</a><span>/</span>
+    <a asp-controller="Catalog" asp-action="Index" asp-route-category="@Model.Category">@category.GetDisplayName()</a><span>/</span>
+    <span>@Model.Name</span>
+</nav>
+
+<section class="section product-page" style="border-top:none; padding-top: 0;">
+    <div>
+        <div class="image-box">
+            <img src="@image" alt="@Model.Name" onerror="this.onerror=null;this.src='@fallback'" />
+        </div>
+    </div>
+    <div>
+        <p class="kicker">@category.GetDisplayName()</p>
+        <h1 style="font-size: clamp(26px, 4vw, 40px);">@Model.Name</h1>
+        <p class="lead">@Model.Description</p>
+
+        <div class="price-row" style="margin-top: 18px;">
+            @if (Model.HasDiscount)
+            {
+                <span class="big-price">@Model.FinalPrice.ToString("N2") ₽</span>
+                <span class="price-old" style="font-size: 20px;">@Model.Price.ToString("N2") ₽</span>
+                <span class="discount-badge" style="font-size: 15px;">−@Model.DiscountPercent%</span>
+            }
+            else
+            {
+                <span class="big-price">@Model.FinalPrice.ToString("N2") ₽</span>
+            }
+        </div>
+
+        <div class="buy-box">
+            @if (Model.InStock)
+            {
+                if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-controller="Cart" asp-action="Add" method="post">
+                        <div class="row">
+                            <input id="qty" type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" aria-label="Количество" />
+                            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <p style="margin: 0 0 10px;">Войдите, чтобы добавить товар в корзину.</p>
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">Войти</a>
+                }
+            }
+            else
+            {
+                <p style="margin: 0; color: var(--accent-dark);">Нет в наличии — загляните позже.</p>
+            }
+        </div>
+
+        <ul class="spec-list">
+            <li><span class="k">Категория</span><span>@category.GetDisplayName()</span></li>
+            <li><span class="k">Наличие</span><span>@(Model.InStock ? $"{Model.StockQuantity} шт. на складе" : "нет")</span></li>
+            <li><span class="k">Артикул</span><span class="num">#@Model.Id</span></li>
+            <li><span class="k">Скидка</span><span>@(Model.HasDiscount ? $"{Model.DiscountPercent}%" : "—")</span></li>
+        </ul>
+    </div>
+</section>

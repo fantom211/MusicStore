@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="340" cy="46" r="70" fill="#e6dcc4"/>
+  
+  <circle cx="200" cy="160" r="74" fill="#8f2d1c" stroke="#26221c" stroke-width="4"/>
+  <circle cx="200" cy="160" r="44" fill="#f6f1e7" stroke="#26221c" stroke-width="3"/>
+  <circle cx="200" cy="160" r="10" fill="#bf4a26"/>
+  <rect x="26" y="238" width="150" height="3" fill="#bf4a26"/>
+  <text x="26" y="266" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#26221c">Барабаны</text>
+</svg>

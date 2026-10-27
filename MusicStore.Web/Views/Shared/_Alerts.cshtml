@@ -1,0 +1,14 @@
+﻿@if (TempData["Success"] is string success)
+{
+    <div class="alert" role="status">
+        <span>@success</span>
+        <button type="button" class="close" aria-label="Закрыть">&times;</button>
+    </div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-error" role="alert">
+        <span>@error</span>
+        <button type="button" class="close" aria-label="Закрыть">&times;</button>
+    </div>
+}

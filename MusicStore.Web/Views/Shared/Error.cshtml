@@ -1,0 +1,15 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Ошибка";
+}
+
+<section class="section" style="border-top: none; max-width: 640px;">
+    <p class="kicker">Ошибка</p>
+    <h2>Что-то фальшивит</h2>
+    <p class="lead">Обрабатывая запрос, сервер столкнулся с ошибкой. Попробуйте вернуться в каталог.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p style="font-family: var(--mono); font-size: 14px; color: var(--muted);">Request ID: @Model.RequestId</p>
+    }
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">На главную</a>
+</section>

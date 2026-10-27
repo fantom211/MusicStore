@@ -1,0 +1,29 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<section class="auth-page">
+    <p class="kicker">Музыкальная Планета</p>
+    <h1>С возвращением</h1>
+    <p class="lead" style="font-size: 16px;">Войдите, чтобы собирать корзину и крутить слоты.</p>
+
+    <form asp-action="Login" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 12px;"></div>
+
+        <div class="field">
+            <label asp-for="UserName">Имя пользователя</label>
+            <input asp-for="UserName" autocomplete="username" autofocus />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Password">Пароль</label>
+            <input asp-for="Password" type="password" autocomplete="current-password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Войти</button>
+    </form>
+
+    <p class="switch">Нет аккаунта? <a asp-action="Register">Зарегистрируйтесь</a> — это минута.</p>
+</section>

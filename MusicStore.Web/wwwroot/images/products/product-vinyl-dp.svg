@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="80" cy="60" r="90" fill="#e6dcc4"/>
+  <circle cx="152" cy="150" r="92" fill="#1c1a16"/>
+  <circle cx="152" cy="150" r="58" fill="none" stroke="#4c463d" stroke-width="1.5"/>
+  <circle cx="152" cy="150" r="10" fill="#f6f1e7"/>
+  <rect x="176" y="40" width="180" height="180" fill="#26221c" stroke="#d9a441" stroke-width="3"/>
+  <path d="M 266 76 C 240 76 226 96 226 122 C 226 150 244 168 266 168 C 288 168 306 150 306 122 C 306 96 292 76 266 76 Z" fill="#d9a441"/>
+  <path d="M 240 118 h 52" stroke="#26221c" stroke-width="6"/>
+  <rect x="244" y="124" width="44" height="14" rx="7" fill="#26221c"/>
+  <text x="266" y="200" font-family="Georgia, serif" font-size="20" font-weight="bold" fill="#d9a441" text-anchor="middle">DISCOVERY</text>
+</svg>

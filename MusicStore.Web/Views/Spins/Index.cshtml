@@ -1,0 +1,100 @@
+﻿@model SpinViewModel
+@{
+    ViewData["Title"] = "Слоты удачи";
+}
+
+<section class="section slot-hall" style="border-top: none;">
+    <div class="section-head" style="margin-bottom: 18px;">
+        <div>
+            <p class="kicker">Ежедневная игра</p>
+            <h2>Слоты удачи</h2>
+        </div>
+    </div>
+
+    <p class="lead" style="margin-bottom: 26px;">
+        @(Model.IsAdminFunMode
+            ? "Фан-режим администратора: крутите сколько угодно — раз в сутки не ограничено, результат не сохраняется и бонус не расходуется."
+            : "Бесплатная прокрутка раз в сутки. Выигрыш — скидка до 20% на один заказ, проигрыша нет: вы ничего не платите и ничего не теряете.")
+    </p>
+
+    <div class="slot-machine">
+        <p class="marquee">Музыкальная Планета · Фортуна</p>
+        <p class="marquee-sub">
+            @(Model.IsAdminFunMode ? "фан-режим · без ограничений · результат решает сервер" : "одна попытка в сутки · результат решает сервер")
+        </p>
+
+        <div class="reels" role="img" aria-label="Три барабана слота">
+            <div class="reel" id="reel0"><span class="symbol">❔</span></div>
+            <div class="reel" id="reel1"><span class="symbol">❔</span></div>
+            <div class="reel" id="reel2"><span class="symbol">❔</span></div>
+        </div>
+
+        <div class="slot-controls">
+            @if (Model.CanSpin)
+            {
+                <button class="btn btn-primary btn-lg" id="spinButton">
+                    @(Model.IsAdminFunMode ? "Крутить (фан-режим)" : "Крутить барабаны")
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-lg" disabled aria-disabled="true">Сегодня уже крутили</button>
+                <a class="btn btn-dark" asp-controller="Orders" asp-action="Index">Мои заказы</a>
+            }
+            <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">🔊 Звук вкл.</button>
+        </div>
+
+        <div class="slot-result" id="spinResult" aria-live="polite">
+            @if (Model.IsAdminFunMode)
+            {
+                <p class="text">Фан-режим: прокрутки не сохраняются и не дают скидку.</p>
+            }
+            else if (!Model.CanSpin && Model.TodayResult != null)
+            {
+                @if (Model.TodayResult.DiscountPercent > 0)
+                {
+                    <p class="title win">Сегодня выпало: @string.Join(" ", Model.TodayResult.Symbols)</p>
+                    <p class="text">Скидка @Model.TodayResult.DiscountPercent% уже в вашем аккаунте.</p>
+                }
+                else
+                {
+                    <p class="title">Сегодня выпало: @string.Join(" ", Model.TodayResult.Symbols)</p>
+                    <p class="text">Без скидки. Новая попытка — после полуночи.</p>
+                }
+            }
+            else
+            {
+                <p class="text">Нажмите «Крутить барабаны», чтобы испытать удачу.</p>
+            }
+        </div>
+    </div>
+
+    @if (Model.ActiveBonus != null)
+    {
+        <div class="bonus-card" style="margin-top: 22px;">
+            <div class="percent">−@Model.ActiveBonus.DiscountPercent%</div>
+            <p style="margin: 8px 0 0;">
+                Активный бонус. Действует до
+                @(Model.ActiveBonus.ExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "—")
+                и применяется к одному заказу при оформлении.
+            </p>
+            <a class="btn btn-dark" style="margin-top: 14px;" asp-controller="Cart" asp-action="Index">В корзину</a>
+        </div>
+    }
+
+    <p class="rules-note">
+        Шансы: без скидки — 45%, 5% — 30%, 10% — 15%, 15% — 8%, 20% — 2%.
+        Комбинации: 💎💎💎 дают 20%, три одинаковых символа — 15%, два алмаза — 10%, пара — 5%.
+    </p>
+</section>
+
+@section Scripts {
+    <script>
+        window.spinConfig = {
+            canSpin: @Json.Serialize(Model.CanSpin),
+            funMode: @Json.Serialize(Model.IsAdminFunMode),
+            symbols: @Json.Serialize(Model.AllSymbols),
+        };
+    </script>
+    <script src="~/js/spin.js" asp-append-version="true" defer></script>
+}

@@ -1,0 +1,52 @@
+﻿@model ProductDto
+@{
+    var category = Enum.Parse<ProductCategory>(Model.Category);
+    var fallback = $"/images/products/{Model.Category.ToString().ToLower()}.svg";
+    var image = string.IsNullOrEmpty(Model.ImageUrl) ? fallback : Model.ImageUrl;
+}
+<article class="product-card">
+    <a asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" class="card-main">
+        <img class="image" src="@image" alt="@Model.Name" onerror="this.onerror=null;this.src='@fallback'" />
+        <div class="body">
+            <span class="category">@category.GetDisplayName()</span>
+            <span class="name">@Model.Name</span>
+            <span class="price-row">
+                @if (Model.HasDiscount)
+                {
+                    <span class="price">@Model.FinalPrice.ToString("N0") ₽</span>
+                    <span class="price-old">@Model.Price.ToString("N0") ₽</span>
+                    <span class="discount-badge">−@Model.DiscountPercent%</span>
+                }
+                else
+                {
+                    <span class="price">@Model.FinalPrice.ToString("N0") ₽</span>
+                }
+            </span>
+            @if (!Model.InStock)
+            {
+                <span class="stock-note out">Нет в наличии</span>
+            }
+            else if (Model.StockQuantity <= 3)
+            {
+                <span class="stock-note">Осталось @Model.StockQuantity шт.</span>
+            }
+        </div>
+    </a>
+    @if (Model.InStock)
+    {
+        <div class="card-actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Cart" asp-action="Add" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">В корзину</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-quiet btn-sm btn-block">Войдите, чтобы купить</a>
+            }
+        </div>
+    }
+</article>

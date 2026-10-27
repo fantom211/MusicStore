@@ -1,0 +1,60 @@
+﻿@model List<OrderDto>
+@{
+    ViewData["Title"] = "Заказы";
+    var statusNames = new Dictionary<string, string>
+    {
+        ["New"] = "новый",
+        ["Paid"] = "оплачен",
+        ["Shipped"] = "отправлен",
+        ["Delivered"] = "доставлен",
+        ["Cancelled"] = "отменён",
+    };
+}
+
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="kicker">Кабинет</p>
+            <h2>История заказов</h2>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="title">Заказов пока нет</p>
+            <p>Соберите корзину и оформите первый заказ.</p>
+            <a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">В каталог</a>
+        </div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th scope="col">№</th>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Состав</th>
+                    <th scope="col">Бонус</th>
+                    <th scope="col">Сумма</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td class="num">#@order.Id</td>
+                        <td class="num">@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@string.Join(", ", order.Items.Select(i => $"{i.ProductName} × {i.Quantity}"))</td>
+                        <td>@(order.SpinDiscountPercent > 0 ? $"−{order.SpinDiscountPercent}%" : "—")</td>
+                        <td class="num"><strong>@order.TotalAmount.ToString("N2") ₽</strong></td>
+                        <td><span class="status-badge @order.Status">@(statusNames.GetValueOrDefault(order.Status, order.Status))</span></td>
+                        <td><a class="btn btn-quiet btn-sm" asp-action="Details" asp-route-id="@order.Id">Подробнее</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#efe6d3"/>
+  <circle cx="340" cy="46" r="70" fill="#e6dcc4"/>
+  
+  <rect x="96" y="70" width="208" height="180" rx="6" fill="#1c1a16" stroke="#26221c" stroke-width="3"/>
+  <rect x="110" y="84" width="180" height="34" rx="3" fill="#d9a441"/>
+  <rect x="110" y="130" width="180" height="106" rx="3" fill="#33302a"/>
+  <g stroke="#4c463d" stroke-width="3">
+    <line x1="110" y1="152" x2="290" y2="152"/>
+    <line x1="110" y1="176" x2="290" y2="176"/>
+    <line x1="110" y1="200" x2="290" y2="200"/>
+  </g>
+  <rect x="26" y="238" width="150" height="3" fill="#bf4a26"/>
+  <text x="26" y="266" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#26221c">Усилители</text>
+</svg>

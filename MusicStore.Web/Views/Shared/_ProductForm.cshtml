@@ -1,0 +1,98 @@
+﻿@model ProductUpsertRequest
+@{
+    var isEdit = (bool?)ViewData["IsEdit"] == true;
+    var title = isEdit ? "Редактирование товара" : "Новый товар";
+    ViewData["Title"] = title;
+    var imageOptions = new[]
+    {
+        "/images/products/product-strat.svg",
+        "/images/products/product-pacifica.svg",
+        "/images/products/product-strings-eb.svg",
+        "/images/products/product-strings-da.svg",
+        "/images/products/product-piano-yamaha.svg",
+        "/images/products/product-piano-casio.svg",
+        "/images/products/product-drums-pearl.svg",
+        "/images/products/product-sticks.svg",
+        "/images/products/product-vinyl-pf.svg",
+        "/images/products/product-vinyl-dp.svg",
+        "/images/products/product-amp-marshall.svg",
+        "/images/products/product-amp-fender.svg",
+        "/images/products/guitars.svg",
+        "/images/products/strings.svg",
+        "/images/products/pianos.svg",
+        "/images/products/drums.svg",
+        "/images/products/vinyl.svg",
+        "/images/products/amplifiers.svg",
+    };
+}
+
+<section class="auth-page" style="max-width: 560px;">
+    <nav class="breadcrumbs" style="margin-bottom: 10px;">
+        <a asp-action="Index">Админ-панель</a><span>/</span><span>@title</span>
+    </nav>
+    <p class="kicker">Администрирование</p>
+    <h1>@title</h1>
+
+    <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" novalidate>
+        @if (isEdit)
+        {
+            <input type="hidden" name="id" value="@ViewData["Id"]" />
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 12px;"></div>
+
+        <div class="field">
+            <label asp-for="Name">Название *</label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Description">Описание</label>
+            <textarea asp-for="Description" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="field">
+                <label asp-for="Category">Категория *</label>
+                <select asp-for="Category" asp-items="Html.GetEnumSelectList<ProductCategory>()"></select>
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Price">Цена, ₽ *</label>
+                <input asp-for="Price" type="number" step="0.01" min="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="field">
+                <label asp-for="DiscountPercent">Скидка, %</label>
+                <input asp-for="DiscountPercent" type="number" min="0" max="100" />
+                <span asp-validation-for="DiscountPercent" class="text-danger"></span>
+            </div>
+            <div class="field">
+                <label asp-for="StockQuantity">На складе, шт. *</label>
+                <input asp-for="StockQuantity" type="number" min="0" />
+                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="field">
+            <label asp-for="ImageUrl">Изображение</label>
+            <input asp-for="ImageUrl" list="image-options" placeholder="/images/products/product-strat.svg" />
+            <datalist id="image-options">
+                @foreach (var option in imageOptions)
+                {
+                    <option value="@option"></option>
+                }
+            </datalist>
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
+        <div class="field check">
+            <input asp-for="IsActive" />
+            <label asp-for="IsActive" style="text-transform: none; letter-spacing: 0; font-size: 15px; font-family: var(--sans); color: var(--ink); margin: 0;">
+                Активен (виден в каталоге)
+            </label>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary btn-lg">@(isEdit ? "Сохранить" : "Создать")</button>
+            <a asp-action="Index" class="btn btn-quiet btn-lg">Отмена</a>
+        </div>
+    </form>
+</section>

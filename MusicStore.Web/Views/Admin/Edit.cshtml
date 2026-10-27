@@ -1,0 +1,6 @@
+@model ProductUpsertRequest
+@{
+    ViewData["IsEdit"] = true;
+    ViewData["Id"] = ViewContext.RouteData.Values["id"];
+}
+<partial name="_ProductForm" model="Model" />

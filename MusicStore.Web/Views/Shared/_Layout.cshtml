@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] != null ? $"{ViewData["Title"]} — Музыкальная Планета" : "Музыкальная Планета")</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#content">К основному содержанию</a>
+
+    <div class="topbar">
+        <div class="container">
+            <span class="hide-sm">Независимый магазин музыкального оборудования</span>
+            <span>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Account" asp-action="Profile">Кабинет</a>
+                    if (User.IsInRole(AppRoles.Admin))
+                    {
+                        <span class="accent"> · </span>
+                        <a asp-controller="Admin" asp-action="Index">Админ-панель</a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+                }
+            </span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="container">
+            <a class="logo" asp-controller="Home" asp-action="Index">Музыкальная <em>Планета</em><small>музыкальный магазин</small></a>
+            <nav class="main-nav" aria-label="Основная навигация">
+                <a asp-controller="Catalog" asp-action="Index">Каталог</a>
+                <a asp-controller="Spins" asp-action="Index">Слоты удачи</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Orders" asp-action="Index">Заказы</a>
+                    <a asp-controller="Cart" asp-action="Index" class="cart-link">Корзина
+                        @await Component.InvokeAsync("CartBadge")
+                    </a>
+                    <span class="nav-username">
+                        @User.Identity.Name
+                        @if (User.IsInRole(AppRoles.Admin))
+                        {
+                            <span class="role-badge">ADMIN</span>
+                        }
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit">Выйти</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">Войти</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <main id="content" class="container">
+        <partial name="_Alerts" />
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <span>&copy; 2026 — «Музыкальная Планета», учебный проект на ASP.NET Core MVC.</span>
+            <span>Гитары · струны · пианино · барабаны · пластинки · усилители</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
